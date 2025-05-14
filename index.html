@@ -1,0 +1,87 @@
+ <!DOCTYPE html>
+<html>
+<head>
+  <title>Wealth Gap Systems Map</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <style>
+    .node:hover { stroke-width: 3px !important; cursor: pointer; }
+    .tooltip {
+      position: absolute;
+      background: white;
+      border: 1px solid #333;
+      padding: 10px;
+      border-radius: 5px;
+      visibility: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="mermaid">
+    graph TD
+      %% NODES
+      A[("Black Homeownership<br>🏠✊🏾")]:::green
+      B[("Black Businesses<br>🛍️📈")]:::green
+      C[("Political Power<br>🗳️💪🏾")]:::green
+      D[("Predatory Lending<br>🏦🚫")]:::red
+      E[("Credit Denials<br>💳❌")]:::red
+      F[("Community Land Trusts<br>🏡🔄")]:::green
+      G[("Gentrification<br>🏙️➡️🚪")]:::red
+      H[("Reparations Tool<br>💰➡️✊🏾")]:::blue
+      I[("Co-op Funding App<br>🤝🏾💸")]:::blue
+      J[("Church Investments<br>⛪🏾")]:::purple
+      K[("Mutual Aid<br>🤲🏾♻️")]:::purple
+
+      %% ARROWS
+      D -->|"Drains $500B/year"| E
+      E -->|"Lowers credit scores"| D
+      G -->|"Forces families out"| D
+      A -->|"+5% local GDP"| B
+      B -->|"Creates 10x jobs"| C
+      C -->|"Changes policies"| A
+      F -->|"Locks in affordability"| G
+      H -->|"40% gap closure"| A
+      I -->|"Funds 50+ co-ops"| B
+      J -->|"$2M local projects"| B
+      K -->|"Prevents crises"| C
+
+      %% STYLING
+      classDef red fill:#ffebee,stroke:#d32f2f,color:black;
+      classDef green fill:#e8f5e9,stroke:#388e3c,color:black;
+      classDef blue fill:#e3f2fd,stroke:#1976d2,color:black;
+      classDef purple fill:#f3e5f5,stroke:#7b1fa2,color:black;
+  </div>
+
+  <div id="tooltip" class="tooltip"></div>
+
+  <script>
+    mermaid.initialize({ startOnLoad: true });
+    document.addEventListener('DOMContentLoaded', () => {
+      const nodes = document.querySelectorAll('.node');
+      const tooltip = document.getElementById('tooltip');
+      
+      // TOOLTIP CONTENT
+      const tooltips = {
+        A: "Black homeowners build generational wealth. <br><b>Example:</b> Tulsa's Black Wall Street",
+        D: "Predatory loans charge higher rates to Black borrowers. <br><b>Data:</b> $208K lost per family",
+        H: "Calculate reparations owed. <br><b>Tool:</b> <a href='https://www.reparationslab.org/calculator' target='_blank'>Reparations Lab</a>"
+      };
+
+      // HOVER EFFECTS
+      nodes.forEach(node => {
+        node.addEventListener('mouseover', (e) => {
+          const id = node.id.replace('node-', '');
+          if (tooltips[id]) {
+            tooltip.innerHTML = tooltips[id];
+            tooltip.style.visibility = 'visible';
+            tooltip.style.left = `${e.pageX + 10}px`;
+            tooltip.style.top = `${e.pageY + 10}px`;
+          }
+        });
+        node.addEventListener('mouseout', () => {
+          tooltip.style.visibility = 'hidden';
+        });
+      });
+    });
+  </script>
+</body>
+</html>
