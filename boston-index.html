@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Improved Wealth Gap Systems Map</title>
+  <!-- Pinned version of Mermaid for stability -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    #info-panel {
+      position: fixed;
+      width: 300px;
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 100;
+      border: 1px solid #ddd;
+      max-height: 80vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
+    .mermaid {
+      width: 100%;
+      min-height: 500px;
+    }
+    /* Node styling */
+    .node rect, .node circle, .node ellipse, .node polygon, .node path {
+      cursor: pointer !important;
+    }
+    .close-btn {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    /* Key styles */
+    details {
+      margin-bottom: 20px;
+      border: 1px solid #eee;
+      border-radius: 8px;
+      padding: 10px;
+    }
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+      padding: 5px;
+    }
+    .key-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .key-item {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+      padding: 5px;
+      border-radius: 4px;
+    }
+    .color-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      margin-right: 10px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+    .symbol {
+      font-size: 18px;
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Status indicator */
+    #status {
+      background: #f5f5f5;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: #ccc;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .status-loading .status-indicator {
+      background: #ffb300;
+    }
+    .status-ready .status-indicator {
+      background: #4caf50;
+    }
+    .status-error .status-indicator {
+      background: #f44336;
+    }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+      #info-panel {
+        width: 85%;
+        max-width: 300px;
+        left: 50% !important;
+        transform: translateX(-50%);
+        top: auto !important;
+        bottom: 20px;
+      }
+      .key-container {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h1>Wealth Gap Systems Map</h1>
+  
+  <div id="status" class="status-loading">
+    <span class="status-indicator"></span>
+    <span id="status-text">Loading map...</span>
+  </div>
+  
+  <p><strong>Click any colored node below</strong> to explore systemic relationships</p>
+
+<pre class="mermaid">
+  graph TD
+    A[("Boston Black Homeownership<br>🏠 34%")]:::green
+    B[("Black Businesses in Boston<br>🛍️ 3% of firms")]:::green
+    C[("Political Representation<br>🗳️ 13% City Council")]:::green
+    D[("Predatory Lending in Boston<br>🏦 2.5x loans")]:::red
+    E[("Credit Denials (Boston)<br>💳 53% denied")]:::red
+    F[("Dudley Street CLT<br>🏡 225 homes")]:::green
+    G[("Boston Gentrification<br>🏙️ -50% Black pop.")]:::red
+    H[("Boston Reparations Task Force<br>💰 2023 launch")]:::blue
+    I[("Ujima Project<br>🤝🏾 $4M fund")]:::blue
+    J[("Black Churches in Boston<br>⛪ 140+ congregations")]:::purple
+    K[("Boston Mutual Aid<br>🤲🏾 10K+ served")]:::purple
+
+    D -->|"Costs $250M/year"| E
+    E -.->|"Feedback loop"| D
+    G -->|"Displaces 1K/year"| D
+    A -->|"+$50M local economy"| B
+    B -->|"Ujima: 45 jobs"| C
+    C -.->|"Policy wins"| A
+    F -->|"0% displacement"| G
+    H -->|"$2B proposal"| A
+    I -->|"Funds 12 businesses"| B
+    J -->|"$1.5M investments"| B
+    K -->|"Prevents 500 evictions"| C
+
+    classDef red fill:#ffebee,stroke:#d32f2f,color:#d32f2f;
+    classDef green fill:#e8f5e9,stroke:#388e3c,color:#388e3c;
+    classDef blue fill:#e3f2fd,stroke:#1976d2,color:#1976d2;
+    classDef purple fill:#f3e5f5,stroke:#7b1fa2,color:#7b1fa2;
+    
+    linkStyle 1 stroke-dasharray: 5 5;
+    linkStyle 5 stroke-dasharray: 5 5;
+</pre>
+
+  <div id="info-panel" aria-live="polite" role="dialog" aria-modal="true">
+    <h3 id="panel-title">Node Information</h3>
+    <div id="panel-content">Click any node to view details</div>
+    <button class="close-btn" onclick="closeInfoPanel()">
+      Close
+    </button>
+  </div>
+
+  <!-- Collapsible Key -->
+  <details open>
+    <summary>Map Key (Click to Expand/Collapse)</summary>
+    <div class="key-container">
+      <div>
+        <h3>Node Colors</h3>
+        <div class="key-item">
+          <div class="color-box" style="background:#388e3c;"></div>
+          <span><strong>Green:</strong> Solutions</span>
+        </div>
+        <div class="key-item">
+          <div class="color-box" style="background:#d32f2f;"></div>
+          <span><strong>Red:</strong> Problems</span>
+        </div>
+        <div class="key-item">
+          <div class="color-box" style="background:#1976d2;"></div>
+          <span><strong>Blue:</strong> Tools</span>
+        </div>
+        <div class="key-item">
+          <div class="color-box" style="background:#7b1fa2;"></div>
+          <span><strong>Purple:</strong> Cultural Assets</span>
+        </div>
+      </div>
+      
+      <div>
+        <h3>Symbols</h3>
+        <div class="key-item">
+          <div class="symbol">🏠</div>
+          <span>Housing</span>
+        </div>
+        <div class="key-item">
+          <div class="symbol">🛍️</div>
+          <span>Business</span>
+        </div>
+        <div class="key-item">
+          <div class="symbol">🗳️</div>
+          <span>Political Power</span>
+        </div>
+        <div class="key-item">
+          <div class="symbol">🤝🏾</div>
+          <span>Cooperation</span>
+        </div>
+      </div>
+      
+      <div>
+        <h3>Connections</h3>
+        <p>Arrows show cause-and-effect relationships between systems.</p>
+        <p><strong>Solid arrows:</strong> Direct impacts</p>
+        <p><strong>Dashed arrows:</strong> Systemic feedback loops</p>
+      </div>
+    </div>
+  </details>
+  
+<script>
+  // Boston-specific node data
+  const nodeData = {
+    "A": "Boston's Black homeownership rate (34%) is among the lowest in major U.S. cities. For every $1 in White household wealth, Black households have just $0.03. Gentrification in Dorchester/Roxbury exacerbates this gap.",
+    "B": "Black-owned businesses make up just 3% of Boston firms despite Black residents being 25% of the population. The Ujima Project directs capital to these businesses through democratic funding.",
+    "C": "Boston's City Council is 13% Black (2 of 13 seats). Areas with Black representation see more equitable development policies.",
+    "D": "Black Bostonians are 2.5x more likely to receive high-cost mortgages, draining $250M annually from communities (MCBC 2021).",
+    "E": "53% of Black mortgage applicants in Boston are denied vs. 23% of White applicants with similar finances (Boston Fed 2020).",
+    "F": "Dudley Street CLT in Roxbury maintains 225 permanently affordable homes with 0% displacement since 1985.",
+    "G": "Boston lost 50% of its Black population since 1970 due to gentrification. Median rent rose 40% in Roxbury from 2010-2020.",
+    "H": "Boston's 2023 Reparations Task Force is modeling payments for slavery, redlining, and urban renewal harms.",
+    "I": "The Ujima Project has deployed $4M to 12 Black businesses, creating 45 local jobs with 90% survival rates.",
+    "J": "Black churches (e.g., Twelfth Baptist) anchor community development, mobilizing $1.5M for local projects annually.",
+    "K": "Boston mutual aid networks (e.g., Mutual Aid Eastie) served 10K+ residents and prevented 500 evictions during COVID."
+  };
+
+  // Initialize Mermaid
+  mermaid.initialize({
+    startOnLoad: true,
+    securityLevel: 'loose',
+    flowchart: { curve: 'basis' }
+  });
+
+  // Track if we've initialized
+  let initialized = false;
+
+  // Robust initialization function
+  function initializeApp() {
+    if (initialized) return;
+    
+    const statusEl = document.getElementById('status');
+    const statusText = document.getElementById('status-text');
+    
+    try {
+      // Wait for Mermaid to render
+      const checkDiagram = setInterval(() => {
+        const diagram = document.querySelector('.mermaid svg');
+        if (diagram) {
+          clearInterval(checkDiagram);
+          setupEventHandlers();
+          statusEl.className = 'status-ready';
+          statusText.textContent = 'Map ready. Click any node to learn more.';
+          initialized = true;
+        }
+      }, 100);
+      
+      // Timeout if diagram fails to render
+      setTimeout(() => {
+        if (!initialized) {
+          clearInterval(checkDiagram);
+          statusEl.className = 'status-error';
+          statusText.textContent = 'Error loading diagram. Try refreshing.';
+        }
+      }, 5000);
+    } catch (error) {
+      console.error('Initialization error:', error);
+      statusEl.className = 'status-error';
+      statusText.textContent = 'Error loading application.';
+    }
+  }
+
+  // Set up all event handlers
+  function setupEventHandlers() {
+    // Use event delegation for the entire SVG
+    const svg = document.querySelector('.mermaid svg');
+    if (!svg) return;
+    
+    svg.addEventListener('click', (event) => {
+      let target = event.target;
+      
+      // Walk up the DOM to find the node container
+      while (target && target !== svg) {
+        if (target.classList.contains('node') || 
+            (target.tagName === 'g' && target.querySelector('text'))) {
+          handleNodeClick(target, event);
+          return;
+        }
+        target = target.parentNode;
+      }
+    });
+    
+    // Close panel when clicking outside
+    document.addEventListener('click', (event) => {
+      const panel = document.getElementById('info-panel');
+      if (panel.style.display === 'block' && 
+          !panel.contains(event.target) &&
+          !event.target.closest('.node')) {
+        closeInfoPanel();
+      }
+    });
+  }
+
+  // Handle node clicks
+  function handleNodeClick(nodeElement, event) {
+    event.stopPropagation();
+    
+    // Get node text content
+    const textElement = nodeElement.querySelector('text');
+    if (!textElement) return;
+    
+    const nodeText = textElement.textContent;
+    
+    // Map node text to our node IDs
+    const nodeMap = {
+      "Boston Black Homeownership": "A",
+      "Black Businesses in Boston": "B",
+      "Political Representation": "C",
+      "Predatory Lending in Boston": "D",
+      "Credit Denials (Boston)": "E",
+      "Dudley Street CLT": "F",
+      "Boston Gentrification": "G",
+      "Boston Reparations Task Force": "H",
+      "Ujima Project": "I",
+      "Black Churches in Boston": "J",
+      "Boston Mutual Aid": "K"
+    };
+    
+    // Find matching node
+    let nodeId = null;
+    for (const [text, id] of Object.entries(nodeMap)) {
+      if (nodeText.includes(text)) {
+        nodeId = id;
+        break;
+      }
+    }
+    
+    if (nodeId && nodeData[nodeId]) {
+      showInfoPanel(nodeData[nodeId], nodeText.split('\n')[0].trim(), event);
+    }
+  }
+
+  // Show info panel
+  function showInfoPanel(content, title, event) {
+    const panel = document.getElementById('info-panel');
+    panel.querySelector('#panel-content').textContent = content;
+    panel.querySelector('#panel-title').textContent = title;
+    
+    // Position panel
+    panel.style.display = 'block';
+    const x = Math.min(event.clientX, window.innerWidth - panel.offsetWidth - 20);
+    const y = Math.min(event.clientY, window.innerHeight - panel.offsetHeight - 20);
+    panel.style.left = `${x}px`;
+    panel.style.top = `${y}px`;
+  }
+
+  // Close info panel
+  function closeInfoPanel() {
+    document.getElementById('info-panel').style.display = 'none';
+  }
+
+  // Start the application
+  document.addEventListener('DOMContentLoaded', initializeApp);
+  
+  // Reinitialize if needed (e.g., after window resize)
+  window.addEventListener('resize', () => {
+    if (initialized) {
+      setupEventHandlers();
+    }
+  });
+</script>
+</body>
+</html>
