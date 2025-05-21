@@ -11,6 +11,7 @@ _(Example: Red loops show wealth extraction, green loops show community solution
 ## Features
 
 🔍 **Interactive Systems Map**
+
 - [x] Color-coded nodes (problems/solutions/tools)
 - [o] Click any element for real-world examples and data sources
 - [o] Dynamic filtering by issue type
@@ -18,6 +19,7 @@ _(Example: Red loops show wealth extraction, green loops show community solution
 📊 **Data-Driven**
 
 Pulls live economic data from:
+
 - [o] Federal Reserve Wealth Surveys
 - [o] Prosperity Now Scorecard
 - [o] Local municipal APIs
@@ -25,6 +27,7 @@ Pulls live economic data from:
 🛠️ **Hackathon-Ready**
 
 Pre-loaded project templates:
+
 - [o] Reparations calculators
 - [o] Land trust eligibility tools
 - [o] Mutual aid coordination platforms
@@ -44,28 +47,34 @@ git clone https://github.com/asiakay/closing-racial-wealth-gap.git
 cd closing-racial-wealth-gap
 open index.html  # Or deploy to your preferred hosting
 ```
+
 ## Customization Guide
+
 - Edit `nodes.js` to add local data
 - Modify `styles.css` for branding
 - Connect to APIs in `scripts.js`
 
 ## Tech Stack
+
 - **Frontend**: HTML5/CSS3/JavaScript (Vanilla)
 - **Data**: JSON + Federal Reserve API
 - **Hosting**: Cloudflare Pages
 - **Accessibility**: WCAG 2.1 AA compliant
 
 ## Roadmap
+
 - [ ] Add multiplayer collaboration
 - [ ] Integrate Census Bureau API
 - [ ] Mobile app version (React Native)
 
 ## Contributors
-- [Your Name](https://github.com/asiakay)
+
+- [Asia Grady](https://github.com/asiakay)
 - [Contribute](CONTRIBUTING.md) (Guidelines included)
 
 ## License
-MIT © 2025 Asia K - See [LICENSE](LICENSE)
+
+MIT © 2025 Asia Grady - See [LICENSE](LICENSE)
 
 ---
 

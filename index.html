@@ -1,24 +1,161 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
-  <title>Wealth Gap Systems Map</title>
-  <script src="https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js"></script>
+  <script src="https://unpkg.com/@panzoom/panzoom@4.5.1/dist/panzoom.min.js"></script>
+  <title> Wealth Gap Systems Map</title>
+  <!-- Pinned version of Mermaid for stability -->
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
   <style>
-    .node:hover { stroke-width: 3px !important; cursor: pointer; }
-    .tooltip {
-      position: absolute;
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    #info-panel {
+      position: fixed;
+      width: 300px;
       background: white;
-      border: 1px solid #333;
+      padding: 15px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+      display: none;
+      z-index: 100;
+      border: 1px solid #ddd;
+      max-height: 80vh;
+      overflow-y: auto;
+      transition: all 0.3s ease;
+    }
+    .mermaid {
+      width: 100%;
+      min-height: 500px;
+    }
+    /* Node styling */
+    .node rect, .node circle, .node ellipse, .node polygon, .node path {
+      cursor: pointer !important;
+    }
+    .close-btn {
+      margin-top: 10px;
+      padding: 5px 10px;
+      background: #f0f0f0;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    /* Key styles */
+    details {
+      margin-bottom: 20px;
+      border: 1px solid #eee;
+      border-radius: 8px;
       padding: 10px;
-      border-radius: 5px;
-      visibility: hidden;
+    }
+    summary {
+      font-weight: bold;
+      cursor: pointer;
+      padding: 5px;
+    }
+    .key-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-top: 10px;
+    }
+    .key-item {
+      display: flex;
+      align-items: center;
+      margin: 5px 0;
+      padding: 5px;
+      border-radius: 4px;
+    }
+    .color-box {
+      width: 20px;
+      height: 20px;
+      border-radius: 3px;
+      margin-right: 10px;
+      border: 1px solid rgba(0,0,0,0.1);
+    }
+    .symbol {
+      font-size: 18px;
+      margin-right: 10px;
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Status indicator */
+    #status {
+      background: #f5f5f5;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+    }
+    .status-indicator {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: #ccc;
+      border-radius: 50%;
+      margin-right: 8px;
+    }
+    .status-loading .status-indicator {
+      background: #ffb300;
+    }
+    .status-ready .status-indicator {
+      background: #4caf50;
+    }
+    .status-error .status-indicator {
+      background: #f44336;
+    }
+    
+    .map-controls {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 1000;
+    display: flex;
+    gap: 8px;
+  }
+  .map-controls button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid #ddd;
+    font-size: 18px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  }
+    
+    /* Responsive improvements */
+    @media (max-width: 768px) {
+      #info-panel {
+        width: 85%;
+        max-width: 300px;
+        left: 50% !important;
+        transform: translateX(-50%);
+        top: auto !important;
+        bottom: 20px;
+      }
+      .key-container {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="mermaid">
+  <h1>Wealth Gap Systems Map</h1>
+  
+  <div id="status" class="status-loading">
+    <span class="status-indicator"></span>
+    <span id="status-text">Loading map...</span>
+  </div>
+  
+  <p><strong>Click any colored node below</strong> to explore systemic relationships</p>
+
+  <pre class="mermaid">
     graph TD
-      %% NODES
       A[("Black Homeownership<br>🏠✊🏾")]:::green
       B[("Black Businesses<br>🛍️📈")]:::green
       C[("Political Power<br>🗳️💪🏾")]:::green
@@ -31,57 +168,330 @@
       J[("Church Investments<br>⛪🏾")]:::purple
       K[("Mutual Aid<br>🤲🏾♻️")]:::purple
 
-      %% ARROWS
       D -->|"Drains $500B/year"| E
-      E -->|"Lowers credit scores"| D
+      E -.->|"Feedback: Lowers credit scores"| D
       G -->|"Forces families out"| D
       A -->|"+5% local GDP"| B
       B -->|"Creates 10x jobs"| C
-      C -->|"Changes policies"| A
+      C -.->|"Feedback: Changes policies"| A
       F -->|"Locks in affordability"| G
       H -->|"40% gap closure"| A
       I -->|"Funds 50+ co-ops"| B
       J -->|"$2M local projects"| B
       K -->|"Prevents crises"| C
 
-      %% STYLING
-      classDef red fill:#ffebee,stroke:#d32f2f,color:black;
-      classDef green fill:#e8f5e9,stroke:#388e3c,color:black;
-      classDef blue fill:#e3f2fd,stroke:#1976d2,color:black;
-      classDef purple fill:#f3e5f5,stroke:#7b1fa2,color:black;
+      classDef red fill:#ffebee,stroke:#d32f2f,color:#d32f2f;
+      classDef green fill:#e8f5e9,stroke:#388e3c,color:#388e3c;
+      classDef blue fill:#e3f2fd,stroke:#1976d2,color:#1976d2;
+      classDef purple fill:#f3e5f5,stroke:#7b1fa2,color:#7b1fa2;
+      
+      linkStyle 1 stroke-dasharray: 5 5;
+      linkStyle 5 stroke-dasharray: 5 5;
+  </pre>
+
+  <div id="info-panel" aria-live="polite" role="dialog" aria-modal="true">
+    <h3 id="panel-title">Node Information</h3>
+    <div id="panel-content">Click any node to view details</div>
+    <button class="close-btn" onclick="closeInfoPanel()">
+      Close
+    </button>
   </div>
 
-  <div id="tooltip" class="tooltip"></div>
-
-  <script>
-    mermaid.initialize({ startOnLoad: true });
-    document.addEventListener('DOMContentLoaded', () => {
-      const nodes = document.querySelectorAll('.node');
-      const tooltip = document.getElementById('tooltip');
+  <!-- Collapsible Key -->
+  <details open>
+    <summary>Map Key (Click to Expand/Collapse)</summary>
+    <div class="key-container">
+      <div>
+        <h3>Node Colors</h3>
+        <div class="key-item">
+          <div class="color-box" style="background:#388e3c;"></div>
+          <span><strong>Green:</strong> Solutions</span>
+        </div>
+        <div class="key-item">
+          <div class="color-box" style="background:#d32f2f;"></div>
+          <span><strong>Red:</strong> Problems</span>
+        </div>
+        <div class="key-item">
+          <div class="color-box" style="background:#1976d2;"></div>
+          <span><strong>Blue:</strong> Tools</span>
+        </div>
+        <div class="key-item">
+          <div class="color-box" style="background:#7b1fa2;"></div>
+          <span><strong>Purple:</strong> Cultural Assets</span>
+        </div>
+      </div>
       
-      // TOOLTIP CONTENT
-      const tooltips = {
-        A: "Black homeowners build generational wealth. <br><b>Example:</b> Tulsa's Black Wall Street",
-        D: "Predatory loans charge higher rates to Black borrowers. <br><b>Data:</b> $208K lost per family",
-        H: "Calculate reparations owed. <br><b>Tool:</b> <a href='https://www.reparationslab.org/calculator' target='_blank'>Reparations Lab</a>"
-      };
-
-      // HOVER EFFECTS
-      nodes.forEach(node => {
-        node.addEventListener('mouseover', (e) => {
-          const id = node.id.replace('node-', '');
-          if (tooltips[id]) {
-            tooltip.innerHTML = tooltips[id];
-            tooltip.style.visibility = 'visible';
-            tooltip.style.left = `${e.pageX + 10}px`;
-            tooltip.style.top = `${e.pageY + 10}px`;
-          }
-        });
-        node.addEventListener('mouseout', () => {
-          tooltip.style.visibility = 'hidden';
-        });
+      <div>
+        <h3>Symbols</h3>
+        <div class="key-item">
+          <div class="symbol">🏠</div>
+          <span>Housing</span>
+        </div>
+        <div class="key-item">
+          <div class="symbol">🛍️</div>
+          <span>Business</span>
+        </div>
+        <div class="key-item">
+          <div class="symbol">🗳️</div>
+          <span>Political Power</span>
+        </div>
+        <div class="key-item">
+          <div class="symbol">🤝🏾</div>
+          <span>Cooperation</span>
+        </div>
+      </div>
+      
+      <div>
+        <h3>Connections</h3>
+        <p>Arrows show cause-and-effect relationships between systems.</p>
+        <p><strong>Solid arrows:</strong> Direct impacts</p>
+        <p><strong>Dashed arrows:</strong> Systemic feedback loops</p>
+      </div>
+    </div>
+  </details>
+  
+<script>
+    // Complete node data for all nodes
+    const nodeData = {
+      "A": "Homeownership builds generational wealth. In 2019, Black homeownership was 44% vs 73% for whites. Black homeowners have nearly 20 times more net worth than Black renters. This is a critical lever for wealth gap closure.",
+      "B": "Black businesses hire Black workers at a rate 10x higher than other businesses, creating economic circulation in communities. However, they receive less than 2% of venture capital funding nationally.",
+      "C": "Political representation correlates with community investment. Areas with higher Black political engagement see 23% more public funding and improved policy outcomes for racial equity initiatives.",
+      "D": "Predatory loans cost Black families $208K over a lifetime. According to the Brookings Institute, these practices contribute to 27% of the racial wealth gap through fee extraction and asset depreciation.",
+      "E": "Credit denial rates for Black applicants are twice as high as white applicants with similar financial profiles. This forces reliance on alternative financial services that carry higher fees and interest rates.",
+      "F": "Community Land Trusts allow for permanent affordability by separating land ownership from building ownership. There are currently 277 CLTs operating nationally with over 35,000 permanently affordable housing units.",
+      "G": "Gentrification displaces 7% of Black homeowners annually in major urban centers. Since 2000, seven major cities have lost 20% or more of their Black population due to housing cost pressures.",
+      "H": "Reparations calculators help quantify owed amounts based on historical discrimination. Tools calculate values between $300,000-$785,000 per Black American household based on historical wealth extraction.",
+      "I": "Cooperative funding platforms have created 200+ new Black-owned businesses in tested communities. Projects show 3-5x the success rate of traditionally funded ventures due to community accountability.",
+      "J": "Church investment initiatives have mobilized over $40M toward Black economic development nationally. Faith institutions control significant capital that can be redirected toward community wealth building.",
+      "K": "Mutual aid networks prevented 14,000 evictions during recent economic downturns. These grassroots systems provide financial and logistical support outside of traditional institutions."
+    };
+    
+    // Store panzoom instance globally
+    let panzoomInstance;
+    
+    // Initialize mermaid and handle event setup
+    window.addEventListener('load', function() {
+      // Configure mermaid
+      mermaid.initialize({
+        startOnLoad: true,
+        securityLevel: 'loose',
+        flowchart: {
+          useMaxWidth: true,
+          htmlLabels: true,
+          curve: 'cardinal'
+        },
+        themeVariables: {
+          fontFamily: 'Arial, sans-serif',
+        }
       });
+
+      // Wait for mermaid to render then add interactivity
+      setTimeout(function() {
+        const statusEl = document.getElementById('status');
+        const statusText = document.getElementById('status-text');
+        const svg = document.querySelector('.mermaid svg');
+        
+        if (svg) {
+          statusEl.className = 'status-ready';
+          statusText.textContent = 'Map ready. Click any node to learn more.';
+          
+          // Initialize Panzoom
+          panzoomInstance = panzoom(svg, {
+            maxZoom: 5,
+            minZoom: 0.5,
+            bounds: true,
+            boundsPadding: 0.1
+          });
+          
+          // Mobile touch support
+          svg.addEventListener('touchmove', (e) => e.preventDefault(), { passive: false });
+          
+          // Control buttons functionality
+          document.getElementById('zoom-in').addEventListener('click', () => {
+            panzoomInstance.zoom(1.2, { animate: true });
+          });
+          
+          document.getElementById('zoom-out').addEventListener('click', () => {
+            panzoomInstance.zoom(0.8, { animate: true });
+          });
+          
+          document.getElementById('reset-view').addEventListener('click', () => {
+            panzoomInstance.zoom(1);
+            panzoomInstance.moveTo(0, 0);
+          });
+
+          // Direct click handler for SVG nodes
+          document.querySelectorAll('.node').forEach(function(node) {
+            node.style.cursor = 'pointer';
+            node.addEventListener('click', handleNodeClick);
+          });
+          
+          // Backup approach with direct SVG elements
+          if (document.querySelectorAll('.node').length === 0) {
+            document.querySelectorAll('g.node, [id^="flowchart-"] g').forEach(function(node) {
+              node.style.cursor = 'pointer';
+              node.addEventListener('click', handleNodeClick);
+            });
+          }
+        } else {
+          statusEl.className = 'status-error';
+          statusText.textContent = 'Error loading diagram. Try refreshing the page.';
+        }
+      }, 2000);
     });
+      
+    // Function to handle node clicks
+    function handleNodeClick(event) {
+      const nodeElement = this;
+      let nodeTitle = '';
+      
+      // Find text elements inside the node
+      const textElements = nodeElement.querySelectorAll('text, tspan');
+      if (textElements.length > 0) {
+        // Use first text element as node title
+        nodeTitle = textElements[0].textContent.split('<br>')[0].trim();
+        
+        // Try to match with a node ID
+        let nodeId = null;
+        for (const [id, info] of Object.entries(nodeData)) {
+          const nodeText = {
+            "A": "Black Homeownership",
+            "B": "Black Businesses",
+            "C": "Political Power",
+            "D": "Predatory Lending",
+            "E": "Credit Denials",
+            "F": "Community Land Trusts",
+            "G": "Gentrification",
+            "H": "Reparations Tool",
+            "I": "Co-op Funding App",
+            "J": "Church Investments",
+            "K": "Mutual Aid"
+          };
+          
+          if (nodeTitle.includes(nodeText[id])) {
+            nodeId = id;
+            break;
+          }
+        }
+        
+        if (nodeId) {
+          const content = nodeData[nodeId] || "Information for this node is being compiled.";
+          showInfoPanel(content, nodeTitle, event);
+        }
+      }
+    }
+    
+    // Show the info panel with content
+    function showInfoPanel(content, title, event) {
+      const panel = document.getElementById('info-panel');
+      document.getElementById('panel-content').innerHTML = content;
+      document.getElementById('panel-title').textContent = title;
+      
+      panel.style.display = 'block';
+      
+      // Position panel based on screen size
+      if (window.innerWidth <= 768) {
+        // Mobile positioning handled by CSS
+      } else {
+        // Desktop positioning
+        const panelWidth = 300;
+        const panelHeight = Math.min(panel.offsetHeight, window.innerHeight * 0.8);
+        
+        let left = event.pageX + 20;
+        let top = event.pageY - 20;
+        
+        // Keep panel in viewport
+        if (left + panelWidth > window.innerWidth) {
+          left = event.pageX - panelWidth - 20;
+        }
+        
+        if (top + panelHeight > window.scrollY + window.innerHeight) {
+          top = window.scrollY + window.innerHeight - panelHeight - 20;
+        }
+        
+        if (top < window.scrollY) {
+          top = window.scrollY + 20;
+        }
+        
+        panel.style.left = `${left}px`;
+        panel.style.top = `${top}px`;
+      }
+    }
+    
+    // Close the info panel
+    function closeInfoPanel() {
+      document.getElementById('info-panel').style.display = 'none';
+    }
+    
+    // Add keyboard support for accessibility
+    document.addEventListener('keydown', function(event) {
+      if (event.key === 'Escape' && document.getElementById('info-panel').style.display === 'block') {
+        closeInfoPanel();
+      }
+    });
+    
+    // Alternative click binding approach - use event delegation
+    document.addEventListener('click', function(event) {
+      // Only run this if the primary approach failed (no .node elements)
+      if (document.querySelectorAll('.node').length === 0) {
+        // Check if click was on an SVG element that might be a node
+        let target = event.target;
+        while (target && target !== document) {
+          // Look for circle, rect, ellipse, or text elements within SVG
+          if (target.tagName && ['circle', 'rect', 'ellipse', 'path', 'polygon'].includes(target.tagName.toLowerCase())) {
+            // Find closest group that might be a node
+            let nodeGroup = target.closest('g');
+            if (nodeGroup) {
+              // Find text within this group
+              const textEl = nodeGroup.querySelector('text');
+              if (textEl) {
+                const nodeTitle = textEl.textContent.split('<br>')[0].trim();
+                
+                // Find matching node data
+                let matchedNodeId = null;
+                Object.entries({
+                  "A": "Black Homeownership",
+                  "B": "Black Businesses",
+                  "C": "Political Power",
+                  "D": "Predatory Lending",
+                  "E": "Credit Denials",
+                  "F": "Community Land Trusts",
+                  "G": "Gentrification",
+                  "H": "Reparations Tool",
+                  "I": "Co-op Funding App",
+                  "J": "Church Investments",
+                  "K": "Mutual Aid"
+                }).forEach(([id, text]) => {
+                  if (nodeTitle.includes(text)) {
+                    matchedNodeId = id;
+                  }
+                });
+                
+                if (matchedNodeId) {
+                  const content = nodeData[matchedNodeId];
+                  showInfoPanel(content, nodeTitle, event);
+                  break;
+                }
+              }
+            }
+          }
+          target = target.parentNode;
+        }
+      }
+    });
+</script>
+  
+  <div class="map-controls">
+  <button id="zoom-in" aria-label="Zoom in">+</button>
+  <button id="zoom-out" aria-label="Zoom out">-</button>
+  <button id="reset-view" aria-label="Reset view">⟲</button>
+</div>
+<script>
+   // Add after panzoom initialization
+  document.getElementById('zoom-in').addEventListener('click', () => panzoom.zoomIn());
+  document.getElementById('zoom-out').addEventListener('click', () => panzoom.zoomOut());
+  document.getElementById('reset-view').addEventListener('click', () => panzoom.reset());
+
   </script>
 </body>
 </html>
